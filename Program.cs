@@ -25,36 +25,44 @@ class Program
             Console.WriteLine("4. Salir");
             Console.Write("\nIngrese su opción (1-4): ");
 
-            string opcion = Console.ReadLine();
+            string accion = Console.ReadLine();
 
-            switch (opcion)
+            // SOLUCIÓN 3: Convertir a minúsculas para comparación insensible a mayúsculas
+            string accionNormalizada = accion.ToLower();
+
+            switch (accionNormalizada)
             {
+                case "añadir":
                 case "1":
                     AñadirLibro(ref libro1, ref libro2, ref libro3, ref libro4, ref libro5);
                     break;
+                case "eliminar":
                 case "2":
                     EliminarLibro(ref libro1, ref libro2, ref libro3, ref libro4, ref libro5);
                     break;
+                case "mostrar":
                 case "3":
                     MostrarLibros(libro1, libro2, libro3, libro4, libro5);
                     break;
+                case "salir":
                 case "4":
                     salir = true;
                     Console.WriteLine("\n¡Gracias por usar el sistema! Hasta luego.");
                     break;
                 default:
-                    Console.WriteLine("\n❌ Opción no válida. Por favor, ingrese una opción entre 1 y 4.");
+                    Console.WriteLine("\n❌ Opción no válida. Por favor, ingrese una opción válida.");
                     break;
             }
         }
     }
 
     // Función para añadir un libro
+    // SOLUCIÓN 1: Verificar primero si la biblioteca está llena
     static void AñadirLibro(ref string libro1, ref string libro2, ref string libro3, ref string libro4, ref string libro5)
     {
-        // Verificar si hay espacio disponible
-        if (!string.IsNullOrEmpty(libro1) && !string.IsNullOrEmpty(libro2) && 
-            !string.IsNullOrEmpty(libro3) && !string.IsNullOrEmpty(libro4) && 
+        // Verificar si hay espacio disponible ANTES de pedir datos
+        if (!string.IsNullOrEmpty(libro1) && !string.IsNullOrEmpty(libro2) &&
+            !string.IsNullOrEmpty(libro3) && !string.IsNullOrEmpty(libro4) &&
             !string.IsNullOrEmpty(libro5))
         {
             Console.WriteLine("\n❌ No hay más espacio. La biblioteca tiene el máximo de 5 libros.");
@@ -64,6 +72,7 @@ class Program
         Console.Write("\nIngrese el título del libro a añadir: ");
         string nuevoLibro = Console.ReadLine();
 
+        // Validar entrada vacía
         if (string.IsNullOrEmpty(nuevoLibro))
         {
             Console.WriteLine("❌ El título no puede estar vacío.");
@@ -102,8 +111,8 @@ class Program
     static void EliminarLibro(ref string libro1, ref string libro2, ref string libro3, ref string libro4, ref string libro5)
     {
         // Verificar si hay libros para eliminar
-        if (string.IsNullOrEmpty(libro1) && string.IsNullOrEmpty(libro2) && 
-            string.IsNullOrEmpty(libro3) && string.IsNullOrEmpty(libro4) && 
+        if (string.IsNullOrEmpty(libro1) && string.IsNullOrEmpty(libro2) &&
+            string.IsNullOrEmpty(libro3) && string.IsNullOrEmpty(libro4) &&
             string.IsNullOrEmpty(libro5))
         {
             Console.WriteLine("\n❌ No hay libros en la biblioteca para eliminar.");
@@ -152,11 +161,12 @@ class Program
     }
 
     // Función para mostrar la lista de libros
+    // SOLUCIÓN 2: Verificar cadenas nulas/vacías ANTES de mostrar
     static void MostrarLibros(string libro1, string libro2, string libro3, string libro4, string libro5)
     {
         // Verificar si hay libros para mostrar
-        if (string.IsNullOrEmpty(libro1) && string.IsNullOrEmpty(libro2) && 
-            string.IsNullOrEmpty(libro3) && string.IsNullOrEmpty(libro4) && 
+        if (string.IsNullOrEmpty(libro1) && string.IsNullOrEmpty(libro2) &&
+            string.IsNullOrEmpty(libro3) && string.IsNullOrEmpty(libro4) &&
             string.IsNullOrEmpty(libro5))
         {
             Console.WriteLine("\n📚 La biblioteca está vacía. No hay libros disponibles.");
@@ -166,6 +176,7 @@ class Program
         Console.WriteLine("\n📚 === LIBROS DISPONIBLES EN LA BIBLIOTECA ===");
         int numeroLibro = 1;
 
+        // Solo mostrar libros que NO están vacíos
         if (!string.IsNullOrEmpty(libro1))
             Console.WriteLine($"{numeroLibro++}. {libro1}");
         if (!string.IsNullOrEmpty(libro2))
