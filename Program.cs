@@ -4,12 +4,10 @@ class Program
 {
     static void Main()
     {
-        // Variables para almacenar hasta 5 libros
-        string libro1 = "";
-        string libro2 = "";
-        string libro3 = "";
-        string libro4 = "";
-        string libro5 = "";
+        // REFACTORIZACIÓN: Array de libros en lugar de 5 variables separadas
+        string[] libros = new string[5];
+        for (int i = 0; i < 5; i++)
+            libros[i] = "";
 
         bool salir = false;
 
@@ -17,32 +15,25 @@ class Program
 
         while (!salir)
         {
-            // Mostrar menú
-            Console.WriteLine("\n¿Qué desea hacer?");
-            Console.WriteLine("1. Añadir un libro");
-            Console.WriteLine("2. Eliminar un libro");
-            Console.WriteLine("3. Mostrar lista de libros");
-            Console.WriteLine("4. Salir");
-            Console.Write("\nIngrese su opción (1-4): ");
-
+            MostrarMenu();
             string accion = Console.ReadLine();
 
-            // SOLUCIÓN 3: Convertir a minúsculas para comparación insensible a mayúsculas
-            string accionNormalizada = accion.ToLower();
+            // Normalización de entrada: convertir a minúsculas para insensibilidad a mayúsculas
+            string accionNormalizada = NormalizarEntrada(accion);
 
             switch (accionNormalizada)
             {
                 case "añadir":
                 case "1":
-                    AñadirLibro(ref libro1, ref libro2, ref libro3, ref libro4, ref libro5);
+                    AñadirLibro(libros);
                     break;
                 case "eliminar":
                 case "2":
-                    EliminarLibro(ref libro1, ref libro2, ref libro3, ref libro4, ref libro5);
+                    EliminarLibro(libros);
                     break;
                 case "mostrar":
                 case "3":
-                    MostrarLibros(libro1, libro2, libro3, libro4, libro5);
+                    MostrarLibros(libros);
                     break;
                 case "salir":
                 case "4":
@@ -56,14 +47,60 @@ class Program
         }
     }
 
-    // Función para añadir un libro
-    // SOLUCIÓN 1: Verificar primero si la biblioteca está llena
-    static void AñadirLibro(ref string libro1, ref string libro2, ref string libro3, ref string libro4, ref string libro5)
+    // Método para mostrar el menú
+    static void MostrarMenu()
+    {
+        Console.WriteLine("\n¿Qué desea hacer?");
+        Console.WriteLine("1. Añadir un libro");
+        Console.WriteLine("2. Eliminar un libro");
+        Console.WriteLine("3. Mostrar lista de libros");
+        Console.WriteLine("4. Salir");
+        Console.Write("\nIngrese su opción (1-4): ");
+    }
+
+    // Método para normalizar entrada (convertir a minúsculas y eliminar espacios)
+    static string NormalizarEntrada(string entrada)
+    {
+        if (string.IsNullOrEmpty(entrada))
+            return "";
+        return entrada.Trim().ToLower();
+    }
+
+    // Método para cambiar nombre de variable
+    static int ContarLibrosVacios(string[] libros)
+    {
+        int contador = 0;
+        foreach (string libro in libros)
+        {
+            if (string.IsNullOrEmpty(libro))
+                contador++;
+        }
+        return contador;
+    }
+
+    // Método para contar libros disponibles
+    static int ContarLibrosDisponibles(string[] libros)
+    {
+        return libros.Length - ContarLibrosVacios(libros);
+    }
+
+    // Método para verificar si la biblioteca está vacía
+    static bool BibliotecaEstaVacia(string[] libros)
+    {
+        return ContarLibrosDisponibles(libros) == 0;
+    }
+
+    // Método para verificar si la biblioteca está llena
+    static bool BibliotecaEstaLlena(string[] libros)
+    {
+        return ContarLibrosVacios(libros) == 0;
+    }
+
+    // Función para añadir un libro (REFACTORIZACIÓN: Eliminada duplicación)
+    static void AñadirLibro(string[] libros)
     {
         // Verificar si hay espacio disponible ANTES de pedir datos
-        if (!string.IsNullOrEmpty(libro1) && !string.IsNullOrEmpty(libro2) &&
-            !string.IsNullOrEmpty(libro3) && !string.IsNullOrEmpty(libro4) &&
-            !string.IsNullOrEmpty(libro5))
+        if (BibliotecaEstaLlena(libros))
         {
             Console.WriteLine("\n❌ No hay más espacio. La biblioteca tiene el máximo de 5 libros.");
             return;
@@ -73,47 +110,31 @@ class Program
         string nuevoLibro = Console.ReadLine();
 
         // Validar entrada vacía
-        if (string.IsNullOrEmpty(nuevoLibro))
+        if (string.IsNullOrEmpty(nuevoLibro) || string.IsNullOrWhiteSpace(nuevoLibro))
         {
             Console.WriteLine("❌ El título no puede estar vacío.");
             return;
         }
 
-        // Guardar el libro en la primera variable vacía
-        if (string.IsNullOrEmpty(libro1))
+        nuevoLibro = nuevoLibro.Trim();
+
+        // Guardar el libro en la primera posición vacía (REFACTORIZACIÓN: bucle en lugar de múltiples if)
+        for (int i = 0; i < libros.Length; i++)
         {
-            libro1 = nuevoLibro;
-            Console.WriteLine($"✓ Libro '{nuevoLibro}' añadido exitosamente en la posición 1.");
-        }
-        else if (string.IsNullOrEmpty(libro2))
-        {
-            libro2 = nuevoLibro;
-            Console.WriteLine($"✓ Libro '{nuevoLibro}' añadido exitosamente en la posición 2.");
-        }
-        else if (string.IsNullOrEmpty(libro3))
-        {
-            libro3 = nuevoLibro;
-            Console.WriteLine($"✓ Libro '{nuevoLibro}' añadido exitosamente en la posición 3.");
-        }
-        else if (string.IsNullOrEmpty(libro4))
-        {
-            libro4 = nuevoLibro;
-            Console.WriteLine($"✓ Libro '{nuevoLibro}' añadido exitosamente en la posición 4.");
-        }
-        else if (string.IsNullOrEmpty(libro5))
-        {
-            libro5 = nuevoLibro;
-            Console.WriteLine($"✓ Libro '{nuevoLibro}' añadido exitosamente en la posición 5.");
+            if (string.IsNullOrEmpty(libros[i]))
+            {
+                libros[i] = nuevoLibro;
+                Console.WriteLine($"✓ Libro '{nuevoLibro}' añadido exitosamente en la posición {i + 1}.");
+                return;
+            }
         }
     }
 
-    // Función para eliminar un libro
-    static void EliminarLibro(ref string libro1, ref string libro2, ref string libro3, ref string libro4, ref string libro5)
+    // Función para eliminar un libro (REFACTORIZACIÓN: Eliminada duplicación)
+    static void EliminarLibro(string[] libros)
     {
         // Verificar si hay libros para eliminar
-        if (string.IsNullOrEmpty(libro1) && string.IsNullOrEmpty(libro2) &&
-            string.IsNullOrEmpty(libro3) && string.IsNullOrEmpty(libro4) &&
-            string.IsNullOrEmpty(libro5))
+        if (BibliotecaEstaVacia(libros))
         {
             Console.WriteLine("\n❌ No hay libros en la biblioteca para eliminar.");
             return;
@@ -122,52 +143,33 @@ class Program
         Console.Write("\nIngrese el título del libro a eliminar: ");
         string libroAEliminar = Console.ReadLine();
 
-        if (string.IsNullOrEmpty(libroAEliminar))
+        if (string.IsNullOrEmpty(libroAEliminar) || string.IsNullOrWhiteSpace(libroAEliminar))
         {
             Console.WriteLine("❌ El título no puede estar vacío.");
             return;
         }
 
-        // Buscar y eliminar el libro
-        if (libro1 == libroAEliminar)
+        libroAEliminar = libroAEliminar.Trim();
+
+        // Buscar y eliminar el libro (REFACTORIZACIÓN: bucle en lugar de múltiples else if)
+        for (int i = 0; i < libros.Length; i++)
         {
-            libro1 = "";
-            Console.WriteLine($"✓ Libro '{libroAEliminar}' eliminado exitosamente.");
+            if (libros[i] == libroAEliminar)
+            {
+                libros[i] = "";
+                Console.WriteLine($"✓ Libro '{libroAEliminar}' eliminado exitosamente.");
+                return;
+            }
         }
-        else if (libro2 == libroAEliminar)
-        {
-            libro2 = "";
-            Console.WriteLine($"✓ Libro '{libroAEliminar}' eliminado exitosamente.");
-        }
-        else if (libro3 == libroAEliminar)
-        {
-            libro3 = "";
-            Console.WriteLine($"✓ Libro '{libroAEliminar}' eliminado exitosamente.");
-        }
-        else if (libro4 == libroAEliminar)
-        {
-            libro4 = "";
-            Console.WriteLine($"✓ Libro '{libroAEliminar}' eliminado exitosamente.");
-        }
-        else if (libro5 == libroAEliminar)
-        {
-            libro5 = "";
-            Console.WriteLine($"✓ Libro '{libroAEliminar}' eliminado exitosamente.");
-        }
-        else
-        {
-            Console.WriteLine($"❌ El libro '{libroAEliminar}' no se encontró en la biblioteca.");
-        }
+
+        Console.WriteLine($"❌ El libro '{libroAEliminar}' no se encontró en la biblioteca.");
     }
 
-    // Función para mostrar la lista de libros
-    // SOLUCIÓN 2: Verificar cadenas nulas/vacías ANTES de mostrar
-    static void MostrarLibros(string libro1, string libro2, string libro3, string libro4, string libro5)
+    // Función para mostrar la lista de libros (REFACTORIZACIÓN: Eliminada duplicación)
+    static void MostrarLibros(string[] libros)
     {
         // Verificar si hay libros para mostrar
-        if (string.IsNullOrEmpty(libro1) && string.IsNullOrEmpty(libro2) &&
-            string.IsNullOrEmpty(libro3) && string.IsNullOrEmpty(libro4) &&
-            string.IsNullOrEmpty(libro5))
+        if (BibliotecaEstaVacia(libros))
         {
             Console.WriteLine("\n📚 La biblioteca está vacía. No hay libros disponibles.");
             return;
@@ -176,25 +178,16 @@ class Program
         Console.WriteLine("\n📚 === LIBROS DISPONIBLES EN LA BIBLIOTECA ===");
         int numeroLibro = 1;
 
-        // Solo mostrar libros que NO están vacíos
-        if (!string.IsNullOrEmpty(libro1))
-            Console.WriteLine($"{numeroLibro++}. {libro1}");
-        if (!string.IsNullOrEmpty(libro2))
-            Console.WriteLine($"{numeroLibro++}. {libro2}");
-        if (!string.IsNullOrEmpty(libro3))
-            Console.WriteLine($"{numeroLibro++}. {libro3}");
-        if (!string.IsNullOrEmpty(libro4))
-            Console.WriteLine($"{numeroLibro++}. {libro4}");
-        if (!string.IsNullOrEmpty(libro5))
-            Console.WriteLine($"{numeroLibro++}. {libro5}");
+        // Solo mostrar libros que NO están vacíos (REFACTORIZACIÓN: bucle en lugar de múltiples if)
+        foreach (string libro in libros)
+        {
+            if (!string.IsNullOrEmpty(libro))
+            {
+                Console.WriteLine($"{numeroLibro++}. {libro}");
+            }
+        }
 
-        int librosDisponibles = 0;
-        if (!string.IsNullOrEmpty(libro1)) librosDisponibles++;
-        if (!string.IsNullOrEmpty(libro2)) librosDisponibles++;
-        if (!string.IsNullOrEmpty(libro3)) librosDisponibles++;
-        if (!string.IsNullOrEmpty(libro4)) librosDisponibles++;
-        if (!string.IsNullOrEmpty(libro5)) librosDisponibles++;
-
+        int librosDisponibles = ContarLibrosDisponibles(libros);
         Console.WriteLine($"\nTotal de libros: {librosDisponibles}/5");
     }
 }
