@@ -4,10 +4,15 @@ class Program
 {
     static void Main()
     {
-        // REFACTORIZACIÓN: Array de libros en lugar de 5 variables separadas
-        string[] libros = new string[5];
+        // Array de libros disponibles en la biblioteca
+        string[] librosDisponibles = new string[5];
         for (int i = 0; i < 5; i++)
-            libros[i] = "";
+            librosDisponibles[i] = "";
+
+        // Array de libros prestados (máximo 3)
+        string[] librosPrestados = new string[3];
+        for (int i = 0; i < 3; i++)
+            librosPrestados[i] = "";
 
         bool salir = false;
 
@@ -25,18 +30,34 @@ class Program
             {
                 case "añadir":
                 case "1":
-                    AñadirLibro(libros);
+                    AñadirLibro(librosDisponibles);
                     break;
                 case "eliminar":
                 case "2":
-                    EliminarLibro(libros);
+                    EliminarLibro(librosDisponibles);
                     break;
                 case "mostrar":
                 case "3":
-                    MostrarLibros(libros);
+                    MostrarLibros(librosDisponibles);
+                    break;
+                case "buscar":
+                case "4":
+                    BuscarLibro(librosDisponibles);
+                    break;
+                case "prestar":
+                case "5":
+                    PrestarLibro(librosDisponibles, librosPrestados);
+                    break;
+                case "devolver":
+                case "6":
+                    DevolverLibro(librosDisponibles, librosPrestados);
+                    break;
+                case "prestados":
+                case "7":
+                    MostrarLibrosPrestados(librosPrestados);
                     break;
                 case "salir":
-                case "4":
+                case "8":
                     salir = true;
                     Console.WriteLine("\n¡Gracias por usar el sistema! Hasta luego.");
                     break;
@@ -50,12 +71,19 @@ class Program
     // Método para mostrar el menú
     static void MostrarMenu()
     {
-        Console.WriteLine("\n¿Qué desea hacer?");
-        Console.WriteLine("1. Añadir un libro");
-        Console.WriteLine("2. Eliminar un libro");
-        Console.WriteLine("3. Mostrar lista de libros");
-        Console.WriteLine("4. Salir");
-        Console.Write("\nIngrese su opción (1-4): ");
+        Console.WriteLine("\n╔═══════════════════════════════════════════╗");
+        Console.WriteLine("║       ¿Qué desea hacer?                  ║");
+        Console.WriteLine("╠═══════════════════════════════════════════╣");
+        Console.WriteLine("║ 1. Añadir un libro                        ║");
+        Console.WriteLine("║ 2. Eliminar un libro                      ║");
+        Console.WriteLine("║ 3. Mostrar lista de libros                ║");
+        Console.WriteLine("║ 4. Buscar un libro                        ║");
+        Console.WriteLine("║ 5. Prestar un libro (máx. 3)              ║");
+        Console.WriteLine("║ 6. Devolver un libro                      ║");
+        Console.WriteLine("║ 7. Ver libros prestados                   ║");
+        Console.WriteLine("║ 8. Salir                                  ║");
+        Console.WriteLine("╚═══════════════════════════════════════════╝");
+        Console.Write("\nIngrese su opción: ");
     }
 
     // Método para normalizar entrada (convertir a minúsculas y eliminar espacios)
@@ -190,4 +218,164 @@ class Program
         int librosDisponibles = ContarLibrosDisponibles(libros);
         Console.WriteLine($"\nTotal de libros: {librosDisponibles}/5");
     }
-}
+
+    // NUEVA FUNCIÓN: Buscar un libro por título
+    static void BuscarLibro(string[] libros)
+    {
+        if (BibliotecaEstaVacia(libros))
+        {
+            Console.WriteLine("\n❌ La biblioteca está vacía. No hay libros para buscar.");
+            return;
+        }
+
+        Console.Write("\nIngrese el título del libro a buscar: ");
+        string libroBuscado = Console.ReadLine();
+
+        if (string.IsNullOrEmpty(libroBuscado) || string.IsNullOrWhiteSpace(libroBuscado))
+        {
+            Console.WriteLine("❌ El título no puede estar vacío.");
+            return;
+        }
+
+        libroBuscado = libroBuscado.Trim();
+
+        // Buscar el libro en la colección
+        for (int i = 0; i < libros.Length; i++)
+        {
+            if (!string.IsNullOrEmpty(libros[i]) && libros[i] == libroBuscado)
+            {
+                Console.WriteLine($"\n✓ '{libroBuscado}' se encontró en la biblioteca. Está disponible.");
+                return;
+            }
+        }
+
+        Console.WriteLine($"\n❌ '{libroBuscado}' no se encontró en la colección.");
+    }
+
+    // NUEVA FUNCIÓN: Prestar un libro (máximo 3)
+    static void PrestarLibro(string[] librosDisponibles, string[] librosPrestados)
+    {
+        if (BibliotecaEstaVacia(librosDisponibles))
+        {
+            Console.WriteLine("\n❌ No hay libros disponibles para prestar.");
+            return;
+        }
+
+        // Verificar si ya tiene 3 libros prestados
+        if (ContarLibrosDisponibles(librosPrestados) >= 3)
+        {
+            Console.WriteLine("\n❌ Ya tiene el máximo de 3 libros prestados. Debe devolver uno para prestar otro.");
+            return;
+        }
+
+        Console.Write("\nIngrese el título del libro que desea prestar: ");
+        string libroAPrestar = Console.ReadLine();
+
+        if (string.IsNullOrEmpty(libroAPrestar) || string.IsNullOrWhiteSpace(libroAPrestar))
+        {
+            Console.WriteLine("❌ El título no puede estar vacío.");
+            return;
+        }
+
+        libroAPrestar = libroAPrestar.Trim();
+
+        // Verificar que el libro esté disponible
+        int indiceLibro = -1;
+        for (int i = 0; i < librosDisponibles.Length; i++)
+        {
+            if (librosDisponibles[i] == libroAPrestar)
+            {
+                indiceLibro = i;
+                break;
+            }
+        }
+
+        if (indiceLibro == -1)
+        {
+            Console.WriteLine($"❌ El libro '{libroAPrestar}' no está disponible en la biblioteca.");
+            return;
+        }
+
+        // Agregar el libro a la lista de prestados
+        for (int i = 0; i < librosPrestados.Length; i++)
+        {
+            if (string.IsNullOrEmpty(librosPrestados[i]))
+            {
+                librosPrestados[i] = libroAPrestar;
+                librosDisponibles[indiceLibro] = "";
+                Console.WriteLine($"✓ Libro '{libroAPrestar}' prestado exitosamente.");
+                Console.WriteLine($"Libros prestados: {ContarLibrosDisponibles(librosPrestados)}/3");
+                return;
+            }
+        }
+    }
+
+    // NUEVA FUNCIÓN: Devolver un libro prestado
+    static void DevolverLibro(string[] librosDisponibles, string[] librosPrestados)
+    {
+        if (BibliotecaEstaVacia(librosPrestados))
+        {
+            Console.WriteLine("\n❌ No hay libros prestados para devolver.");
+            return;
+        }
+
+        Console.Write("\nIngrese el título del libro a devolver: ");
+        string libroADevolver = Console.ReadLine();
+
+        if (string.IsNullOrEmpty(libroADevolver) || string.IsNullOrWhiteSpace(libroADevolver))
+        {
+            Console.WriteLine("❌ El título no puede estar vacío.");
+            return;
+        }
+
+        libroADevolver = libroADevolver.Trim();
+
+        // Buscar el libro en la lista de prestados
+        for (int i = 0; i < librosPrestados.Length; i++)
+        {
+            if (librosPrestados[i] == libroADevolver)
+            {
+                librosPrestados[i] = "";
+                
+                // Agregar el libro de vuelta a la biblioteca
+                for (int j = 0; j < librosDisponibles.Length; j++)
+                {
+                    if (string.IsNullOrEmpty(librosDisponibles[j]))
+                    {
+                        librosDisponibles[j] = libroADevolver;
+                        break;
+                    }
+                }
+
+                Console.WriteLine($"✓ Libro '{libroADevolver}' devuelto exitosamente.");
+                Console.WriteLine($"Libros prestados: {ContarLibrosDisponibles(librosPrestados)}/3");
+                return;
+            }
+        }
+
+        Console.WriteLine($"❌ El libro '{libroADevolver}' no está en la lista de libros prestados.");
+    }
+
+    // NUEVA FUNCIÓN: Mostrar libros prestados
+    static void MostrarLibrosPrestados(string[] librosPrestados)
+    {
+        if (BibliotecaEstaVacia(librosPrestados))
+        {
+            Console.WriteLine("\n📖 No tiene libros prestados actualmente.");
+            return;
+        }
+
+        Console.WriteLine("\n📖 === LIBROS PRESTADOS ===");
+        int numeroLibro = 1;
+
+        foreach (string libro in librosPrestados)
+        {
+            if (!string.IsNullOrEmpty(libro))
+            {
+                Console.WriteLine($"{numeroLibro++}. {libro}");
+            }
+        }
+
+        int librosPrestadosCount = ContarLibrosDisponibles(librosPrestados);
+        Console.WriteLine($"\nTotal de libros prestados: {librosPrestadosCount}/3");
+    }
