@@ -62,7 +62,7 @@ class Program
                     Console.WriteLine("\n¡Gracias por usar el sistema! Hasta luego.");
                     break;
                 default:
-                    Console.WriteLine("\n❌ Opción no válida. Por favor, ingrese una opción válida.");
+                    Console.WriteLine("\n Opción no válida. Por favor, ingrese una opción válida.");
                     break;
             }
         }
@@ -130,7 +130,7 @@ class Program
         // Verificar si hay espacio disponible ANTES de pedir datos
         if (BibliotecaEstaLlena(libros))
         {
-            Console.WriteLine("\n❌ No hay más espacio. La biblioteca tiene el máximo de 5 libros.");
+            Console.WriteLine("\n No hay más espacio. La biblioteca tiene el máximo de 5 libros.");
             return;
         }
 
@@ -140,7 +140,7 @@ class Program
         // Validar entrada vacía
         if (string.IsNullOrEmpty(nuevoLibro) || string.IsNullOrWhiteSpace(nuevoLibro))
         {
-            Console.WriteLine("❌ El título no puede estar vacío.");
+            Console.WriteLine(" El título no puede estar vacío.");
             return;
         }
 
@@ -164,7 +164,7 @@ class Program
         // Verificar si hay libros para eliminar
         if (BibliotecaEstaVacia(libros))
         {
-            Console.WriteLine("\n❌ No hay libros en la biblioteca para eliminar.");
+            Console.WriteLine("\n No hay libros en la biblioteca para eliminar.");
             return;
         }
 
@@ -173,7 +173,7 @@ class Program
 
         if (string.IsNullOrEmpty(libroAEliminar) || string.IsNullOrWhiteSpace(libroAEliminar))
         {
-            Console.WriteLine("❌ El título no puede estar vacío.");
+            Console.WriteLine(" El título no puede estar vacío.");
             return;
         }
 
@@ -190,7 +190,7 @@ class Program
             }
         }
 
-        Console.WriteLine($"❌ El libro '{libroAEliminar}' no se encontró en la biblioteca.");
+        Console.WriteLine($" El libro '{libroAEliminar}' no se encontró en la biblioteca.");
     }
 
     // Función para mostrar la lista de libros (REFACTORIZACIÓN: Eliminada duplicación)
@@ -199,11 +199,11 @@ class Program
         // Verificar si hay libros para mostrar
         if (BibliotecaEstaVacia(libros))
         {
-            Console.WriteLine("\n📚 La biblioteca está vacía. No hay libros disponibles.");
+            Console.WriteLine("\n La biblioteca está vacía. No hay libros disponibles.");
             return;
         }
 
-        Console.WriteLine("\n📚 === LIBROS DISPONIBLES EN LA BIBLIOTECA ===");
+        Console.WriteLine("\n === LIBROS DISPONIBLES EN LA BIBLIOTECA ===");
         int numeroLibro = 1;
 
         // Solo mostrar libros que NO están vacíos (REFACTORIZACIÓN: bucle en lugar de múltiples if)
@@ -224,7 +224,7 @@ class Program
     {
         if (BibliotecaEstaVacia(libros))
         {
-            Console.WriteLine("\n❌ La biblioteca está vacía. No hay libros para buscar.");
+            Console.WriteLine("\n La biblioteca está vacía. No hay libros para buscar.");
             return;
         }
 
@@ -233,7 +233,7 @@ class Program
 
         if (string.IsNullOrEmpty(libroBuscado) || string.IsNullOrWhiteSpace(libroBuscado))
         {
-            Console.WriteLine("❌ El título no puede estar vacío.");
+            Console.WriteLine(" El título no puede estar vacío.");
             return;
         }
 
@@ -244,12 +244,12 @@ class Program
         {
             if (!string.IsNullOrEmpty(libros[i]) && libros[i] == libroBuscado)
             {
-                Console.WriteLine($"\n✓ '{libroBuscado}' se encontró en la biblioteca. Está disponible.");
+                Console.WriteLine($"\n '{libroBuscado}' se encontró en la biblioteca. Está disponible.");
                 return;
             }
         }
 
-        Console.WriteLine($"\n❌ '{libroBuscado}' no se encontró en la colección.");
+        Console.WriteLine($"\n '{libroBuscado}' no se encontró en la colección.");
     }
 
     // NUEVA FUNCIÓN: Prestar un libro (máximo 3)
@@ -257,14 +257,14 @@ class Program
     {
         if (BibliotecaEstaVacia(librosDisponibles))
         {
-            Console.WriteLine("\n❌ No hay libros disponibles para prestar.");
+            Console.WriteLine("\n No hay libros disponibles para prestar.");
             return;
         }
 
         // Verificar si ya tiene 3 libros prestados
         if (ContarLibrosDisponibles(librosPrestados) >= 3)
         {
-            Console.WriteLine("\n❌ Ya tiene el máximo de 3 libros prestados. Debe devolver uno para prestar otro.");
+            Console.WriteLine("\n Ya tiene el máximo de 3 libros prestados. Debe devolver uno para prestar otro.");
             return;
         }
 
@@ -273,7 +273,7 @@ class Program
 
         if (string.IsNullOrEmpty(libroAPrestar) || string.IsNullOrWhiteSpace(libroAPrestar))
         {
-            Console.WriteLine("❌ El título no puede estar vacío.");
+            Console.WriteLine(" El título no puede estar vacío.");
             return;
         }
 
@@ -292,7 +292,7 @@ class Program
 
         if (indiceLibro == -1)
         {
-            Console.WriteLine($"❌ El libro '{libroAPrestar}' no está disponible en la biblioteca.");
+            Console.WriteLine($" El libro '{libroAPrestar}' no está disponible en la biblioteca.");
             return;
         }
 
@@ -315,7 +315,7 @@ class Program
     {
         if (BibliotecaEstaVacia(librosPrestados))
         {
-            Console.WriteLine("\n❌ No hay libros prestados para devolver.");
+            Console.WriteLine("\n No hay libros prestados para devolver.");
             return;
         }
 
@@ -324,7 +324,7 @@ class Program
 
         if (string.IsNullOrEmpty(libroADevolver) || string.IsNullOrWhiteSpace(libroADevolver))
         {
-            Console.WriteLine("❌ El título no puede estar vacío.");
+            Console.WriteLine(" El título no puede estar vacío.");
             return;
         }
 
@@ -336,7 +336,7 @@ class Program
             if (librosPrestados[i] == libroADevolver)
             {
                 librosPrestados[i] = "";
-                
+
                 // Agregar el libro de vuelta a la biblioteca
                 for (int j = 0; j < librosDisponibles.Length; j++)
                 {
@@ -353,7 +353,7 @@ class Program
             }
         }
 
-        Console.WriteLine($"❌ El libro '{libroADevolver}' no está en la lista de libros prestados.");
+        Console.WriteLine($" El libro '{libroADevolver}' no está en la lista de libros prestados.");
     }
 
     // NUEVA FUNCIÓN: Mostrar libros prestados
@@ -361,11 +361,11 @@ class Program
     {
         if (BibliotecaEstaVacia(librosPrestados))
         {
-            Console.WriteLine("\n📖 No tiene libros prestados actualmente.");
+            Console.WriteLine("\n No tiene libros prestados actualmente.");
             return;
         }
 
-        Console.WriteLine("\n📖 === LIBROS PRESTADOS ===");
+        Console.WriteLine("\n === LIBROS PRESTADOS ===");
         int numeroLibro = 1;
 
         foreach (string libro in librosPrestados)
@@ -379,3 +379,5 @@ class Program
         int librosPrestadosCount = ContarLibrosDisponibles(librosPrestados);
         Console.WriteLine($"\nTotal de libros prestados: {librosPrestadosCount}/3");
     }
+
+}
